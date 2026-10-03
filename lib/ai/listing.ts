@@ -41,6 +41,13 @@ export async function generateListing(image: Buffer, additionalInfo: string, pre
     return productSchema.parse({ ...parsed, description: [parsed.description.trim(), signature].filter(Boolean).join("\n\n") });
   } catch(error) {
     if(error instanceof AppError) throw error;
+    const provider = error as { status?: unknown; code?: unknown; message?: unknown };
+    const status = typeof provider.status === "number" ? provider.status : 0;
+    const code = typeof provider.code === "string" ? provider.code : "";
+    console.error("Listing generation provider error", status || code || (error instanceof Error ? error.name : "UnknownError"));
+    if (status === 401 || status === 403 || code === "invalid_api_key") throw new AppError("La clé OpenAI est invalide ou n’est pas autorisée sur Vercel.", 502);
+    if (status === 429 || code === "insufficient_quota") throw new AppError("Le compte OpenAI n’a plus de quota disponible ou atteint sa limite.", 502);
+    if (status === 400) throw new AppError("OpenAI a refusé la photo ou les informations envoyées. Essaie avec une photo plus nette.", 502);
     throw new AppError("Impossible de générer l’annonce. Réessaie dans quelques instants.",502);
   }
 }
