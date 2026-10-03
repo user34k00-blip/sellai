@@ -4,7 +4,13 @@ import { appUrl } from "./env";
 import { AppError, dbCheck } from "./errors";
 import { adminClient } from "../auth/server";
 export function verifyMutation(request: Request, maxBytes = 16_384) {
-  if (request.headers.get("origin") !== new URL(appUrl()).origin) throw new AppError("Cette requête n’est pas autorisée.", 403);
+  const origin = request.headers.get("origin");
+  const allowedOrigins = new Set<string>();
+  for (const value of [appUrl(), process.env.VERCEL_URL, process.env.VERCEL_BRANCH_URL, process.env.VERCEL_PROJECT_PRODUCTION_URL]) {
+    if (!value) continue;
+    try { allowedOrigins.add(new URL(value.includes("://") ? value : `https://${value}`).origin); } catch { /* ignore malformed optional deployment values */ }
+  }
+  if (!origin || !allowedOrigins.has(origin)) throw new AppError("Cette requête n’est pas autorisée.", 403);
   const size = Number(request.headers.get("content-length") || 0);
   if (size > maxBytes) throw new AppError("Le contenu envoyé est trop volumineux.", 413);
 }
