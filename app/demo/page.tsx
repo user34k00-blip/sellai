@@ -1,0 +1,8 @@
+import Image from "next/image";
+import { Navbar } from "@/components/navbar";
+import { CopyButton } from "@/components/ui";
+export const metadata={title:"Exemple illustratif",robots:{index:false,follow:false}};
+const title="Sweat vert à coupe ample";
+const description="🌿 Sweat vert à coupe ample\n\nUne coupe décontractée avec des manches longues et un col rond.\n\n✨ Détails visibles :\n• Couleur : vert foncé\n• Coupe : ample\n• Poignets et bas côtelés\n\nTaille, composition et état à confirmer par le vendeur.";
+export default function Demo(){return <><Navbar/><main className="demo-page container" id="main-content"><div className="page-heading"><span className="eyebrow">EXEMPLE ILLUSTRATIF</span><h1>Une photo, une annonce.</h1><p>Ces données fictives permettent de découvrir la présentation. Elles ne proviennent pas d’une analyse réelle et ne sont pas ajoutées à ton compte.</p></div><div className="demo-preview"><Image src="/demo-v2.webp" alt="Exemple visuel avant et après d’un sweat vert" width={1330} height={1182}/><section className="panel"><div className="panel-title"><h2>{title}</h2><CopyButton text={title}/></div><p style={{whiteSpace:"pre-line"}}>{description}</p><CopyButton text={description} label="Copier la description"/></section></div><section className="demo-history panel"><h2>Exemple d’historique</h2><article className="history-card"><Image className="history-thumbnail" src="/demo-v2.webp" alt="Miniature illustrative" width={600} height={500}/><div className="history-body"><h3>{title}</h3><span className="badge">Donnée fictive</span></div></article></section></main></>;}
+
